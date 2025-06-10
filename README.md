@@ -122,14 +122,16 @@ sudo certbot --nginx -d n8n.yourdomain.com
 ✅ Agree to TOS
 ✅ Choose to share (Y/N) with EFF
 ✅ Certbot installs SSL + reloads Nginx
+
 🧰 Troubleshooting & Fixes
-❌ Problem	✅ Solution
-502 Bad Gateway	Make sure Docker is running: docker ps
+❌ Problem	  ✅ Solution
+502 Bad Gateway	  Make sure Docker is running: docker ps
 Certbot fails	Wait for DNS propagation & try again
-nano confusing	Use CTRL+O to save, CTRL+X to exit
-Port 80 in use	Run sudo lsof -i :80 to see what's blocking
-SSL doesn't renew	Test with: sudo certbot renew --dry-run
+nano confusing	  Use CTRL+O to save, CTRL+X to exit
+Port 80 in use	  Run sudo lsof -i :80 to see what's blocking
+SSL doesn't renew	Test with:   sudo certbot renew --dry-run
 Snap errors / certbot outdated	Run: sudo apt purge certbot && sudo snap install core; sudo snap refresh core; sudo snap install --classic certbot; sudo ln -s /snap/bin/certbot /usr/bin/certbot
+
 ⚡ Optional Enhancements
 
     Use PostgreSQL instead of default SQLite
