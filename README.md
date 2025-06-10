@@ -12,46 +12,44 @@
 ---
 
 ## 📚 Table of Contents
-- [✨ Overview](#️-overview)
-- [✅ Requirements](#-requirements)
-- [📦 Step-by-Step Setup](#-step-by-step-setup)
-  - [1. Install Docker](#1-install-docker)
-  - [2. Run n8n](#2-run-n8n)
-  - [3. Install Nginx](#3-install-nginx)
-  - [4. Configure Nginx](#4-configure-nginx)
-  - [5. Enable and Restart Nginx](#5-enable-and-restart-nginx)
-  - [6. Add SSL with Certbot](#6-add-ssl-with-certbot)
-- [🧰 Troubleshooting & Fixes](#-troubleshooting--fixes)
-- [⚡ Optional Enhancements](#-optional-enhancements)
-- [💬 Credits](#-credits)
+
+- [📌 Overview](#-overview)
+- [🧰 Requirements](#-requirements)
+- [⚙️ Step-by-Step Setup](#️-step-by-step-setup)
+  - [Install Docker](#install-docker)
+  - [Run n8n](#run-n8n)
+  - [Install Nginx](#install-nginx)
+  - [Configure Nginx](#configure-nginx)
+  - [Enable and Restart Nginx](#enable-and-restart-nginx)
+  - [Add SSL with Certbot](#add-ssl-with-certbot)
+- [🚑 Troubleshooting & Fixes](#-troubleshooting--fixes)
+- [🌟 Optional Enhancements](#-optional-enhancements)
+- [🧾 Credits](#-credits)
 
 ---
 
-## ✨ Overview
+## 📌 Overview
 
 This guide walks you through **self-hosting [n8n](https://n8n.io)** on a Linux server with:
 
-✅ Docker  
-✅ Nginx (Reverse Proxy)  
-✅ Let's Encrypt SSL (via Certbot)  
-✅ Custom Domain (`n8n.makersgridstudio.com`)
-
-No prior DevOps experience required.
+- ✅ Docker  
+- ✅ Nginx (Reverse Proxy)  
+- ✅ Let's Encrypt SSL (via Certbot)  
+- ✅ Custom Domain (`n8n.makersgridstudio.com`)
 
 ---
 
-## ✅ Requirements
+## 🧰 Requirements
 
 - A domain name (e.g. `n8n.yourdomain.com`)
 - Ubuntu 22.04 VPS (GCP, AWS, etc.)
 - Terminal & SSH access
-- Basic copy-paste CLI experience
 
 ---
 
-## 📦 Step-by-Step Setup
+## ⚙️ Step-by-Step Setup
 
-### 1. Install Docker
+### Install Docker
 
 ```bash
 sudo apt update
@@ -59,9 +57,7 @@ sudo apt install docker.io -y
 sudo systemctl enable docker
 sudo systemctl start docker
 
-2. Run n8n
-
-Replace n8n.yourdomain.com with your domain.
+Run n8n
 
 sudo docker run -d --restart unless-stopped -it \
 --name n8n \
@@ -72,17 +68,15 @@ sudo docker run -d --restart unless-stopped -it \
 -v ~/.n8n:/root/.n8n \
 n8nio/n8n
 
-3. Install Nginx
+Install Nginx
 
 sudo apt install nginx -y
 
-4. Configure Nginx
-
-Create config file:
+Configure Nginx
 
 sudo nano /etc/nginx/sites-available/n8n.conf
 
-Paste:
+Paste this config:
 
 server {
     listen 80;
@@ -101,51 +95,36 @@ server {
     }
 }
 
-Save & exit:
-
-    CTRL + O → Enter to save
-
-    CTRL + X to exit
-
-5. Enable and Restart Nginx
+Enable and Restart Nginx
 
 sudo ln -s /etc/nginx/sites-available/n8n.conf /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo systemctl restart nginx
 
-6. Add SSL with Certbot
+Add SSL with Certbot
 
 sudo apt install certbot python3-certbot-nginx -y
 sudo certbot --nginx -d n8n.yourdomain.com
 
-✅ Enter your email
-✅ Agree to TOS
-✅ Choose to share (Y/N) with EFF
-✅ Certbot installs SSL + reloads Nginx
+🚑 Troubleshooting & Fixes
+❌ Issue	✅ Solution
+502 Bad Gateway	Ensure Docker is running: docker ps
+Certbot fails	Make sure DNS points to server IP
+Port already in use	Check: sudo lsof -i :80
+SSL renew fails	Test: sudo certbot renew --dry-run
+🌟 Optional Enhancements
 
-🧰 Troubleshooting & Fixes
-❌ Problem	  ✅ Solution
-502 Bad Gateway	  Make sure Docker is running: docker ps
-Certbot fails	Wait for DNS propagation & try again
-nano confusing	  Use CTRL+O to save, CTRL+X to exit
-Port 80 in use	  Run sudo lsof -i :80 to see what's blocking
-SSL doesn't renew	Test with:   sudo certbot renew --dry-run
-Snap errors / certbot outdated	Run: sudo apt purge certbot && sudo snap install core; sudo snap refresh core; sudo snap install --classic certbot; sudo ln -s /snap/bin/certbot /usr/bin/certbot
+    Setup external DB (PostgreSQL)
 
-⚡ Optional Enhancements
+    Auto-backup .n8n folder via cron
 
-    Use PostgreSQL instead of default SQLite
+    Add a Uptime Monitor (e.g. UptimeRobot)
 
-    Connect GitHub repo to version-control workflows
+    Secure server with UFW (firewall)
 
-    Set up .n8n auto-backups via cron
+🧾 Credits
 
-    Add BetterStack or UptimeRobot monitoring
+Created by @Mezzop
+🔗 Live n8n Instance
 
-    Use Cloudflare DNS for extra protection
-
-💬 Credits
-
-Crafted with ❤️ by Mezzop
-🔗 Live instance: n8n.makersgridstudio.com
-🖥️ Hosted on: GCP Free Tier VM (Ubuntu 22.04)
+Built with ❤️ on Ubuntu 22.04, Docker, and Let's Encrypt
