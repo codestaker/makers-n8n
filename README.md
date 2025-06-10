@@ -1,23 +1,46 @@
-# 🌐 Self-Hosting n8n with Docker, Nginx, and SSL on a Linux Server
+# 🌐 Self-Hosting n8n with Docker, Nginx, and SSL on Ubuntu 22.04
 
-A complete guide to self-hosting **n8n**, the powerful open-source workflow automation tool, on a Linux VPS using **Docker**, **Nginx**, and **Let's Encrypt SSL**.
+![Docker](https://img.shields.io/badge/Docker-Supported-blue)
+![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04-orange)
+![Let's Encrypt](https://img.shields.io/badge/SSL-Let's%20Encrypt-brightgreen)
+![n8n](https://img.shields.io/badge/n8n-Automation-success)
 
-Tested on **Ubuntu 22.04 (GCP Free Tier VM)** with a real domain (`n8n.example.com`). Includes beginner-friendly notes, common error fixes, and helpful CLI keypresses.
+> A complete beginner-friendly guide to self-hosting [n8n](https://n8n.io) — the powerful open-source workflow automation tool — on a Linux server using Docker, Nginx, and Let's Encrypt SSL.
+
+🧪 Tested on: **Ubuntu 22.04 (GCP Free Tier VM)**  
+🌐 With real domain: `n8n.example.com`
+
+---
+
+## 📚 Table of Contents
+
+- [✅ Requirements](#-requirements)
+- [📦 Step-by-Step Setup](#-step-by-step-setup)
+  - [1. Install Docker](#1-install-docker)
+  - [2. Run n8n with Docker](#2-run-n8n-with-docker)
+  - [3. Install Nginx](#3-install-nginx)
+  - [4. Configure Nginx Reverse Proxy](#4-configure-nginx-reverse-proxy)
+  - [5. Enable and Restart Nginx](#5-enable-and-restart-nginx)
+  - [6. Secure with Let's Encrypt SSL](#6-secure-with-lets-encrypt-ssl)
+- [🧰 Common Errors & Fixes](#-common-errors--fixes)
+- [🔄 Keep It Running](#-keep-it-running)
+- [⚡ Optional Enhancements](#-optional-enhancements)
+- [💬 Credits](#-credits)
 
 ---
 
 ## ✅ Requirements
 
-- A registered domain name (e.g. `n8n.example.com`)
-- Ubuntu 22.04 Linux VPS (GCP, AWS, or any provider)
-- Basic SSH access to the server
-- Terminal experience (copy/paste and some keypresses)
+- A registered domain (e.g. `n8n.example.com`)
+- Ubuntu 22.04 VPS (GCP, AWS, etc.)
+- SSH terminal access
+- Basic command line experience
 
 ---
 
 ## 📦 Step-by-Step Setup
 
-### 1. Update & Install Docker
+### 1. Install Docker
 
 ```bash
 sudo apt update
@@ -42,11 +65,11 @@ n8nio/n8n
 
 sudo apt install nginx -y
 
-4. Configure Nginx as a Reverse Proxy
+4. Configure Nginx Reverse Proxy
 
 sudo nano /etc/nginx/sites-available/n8n.conf
 
-Paste the following content:
+Paste the config below:
 
 server {
     listen 80;
@@ -68,18 +91,16 @@ server {
     }
 }
 
-Save & Exit:
+To Save & Exit nano:
 
-    Press CTRL + O to write (save)
-
-    Press Enter to confirm
+    Press CTRL + O → then Enter to write (save)
 
     Press CTRL + X to exit
 
 5. Enable and Restart Nginx
 
 sudo ln -s /etc/nginx/sites-available/n8n.conf /etc/nginx/sites-enabled/
-sudo nginx -t     # (tests config)
+sudo nginx -t
 sudo systemctl restart nginx
 
 6. Secure with Let's Encrypt SSL
@@ -87,41 +108,42 @@ sudo systemctl restart nginx
 sudo apt install certbot python3-certbot-nginx -y
 sudo certbot --nginx -d n8n.example.com
 
+During setup:
+
     Enter your email
 
-    Agree to Terms (press Y then Enter)
+    Agree to terms (press Y + Enter)
 
-    Choose to share email with EFF or not (Y or N)
+    Choose if you want to share your email with EFF (Y/N)
 
 🧰 Common Errors & Fixes
 ❌ Issue	✅ Solution
 502 Bad Gateway	Ensure Docker is running: docker ps
-Certbot fails	Make sure your domain points to the server IP (DNS propagation may take minutes)
-Can't edit file with nano	Use CTRL + O (write), CTRL + X (exit)
-SSL renewal fails later	Run: sudo certbot renew --dry-run to test
-Port already in use	Run: sudo lsof -i :80 to find what’s using it, then stop it
-🔄 Keep It Always Running
+Certbot fails	Make sure your domain points to the server IP (DNS may need time)
+Can't edit with nano	Use CTRL + O, Enter, then CTRL + X
+SSL renewal not working	Test with: sudo certbot renew --dry-run
+Port 80 already in use	Run: sudo lsof -i :80 then stop conflicting service
+Outdated Certbot (Snap Errors)	Run: sudo snap install core; sudo snap refresh core; sudo snap install --classic certbot
+Then link: sudo ln -s /snap/bin/certbot /usr/bin/certbot
+🔄 Keep It Running
 
-    Docker restarts n8n automatically:
-    --restart unless-stopped
+    Docker auto-restarts n8n with --restart unless-stopped
 
-    To monitor logs:
+    Monitor logs:
 
-    docker logs -f n8n
+docker logs -f n8n
 
 ⚡ Optional Enhancements
 
-    Setup external DB: PostgreSQL or SQLite
+    💾 External DB: Setup PostgreSQL or SQLite
 
-    Use GitHub repo to version-control workflows
+    🧠 GitHub Sync: Version-control workflows
 
-    Auto-backup .n8n folder using cron
+    🔄 Auto-backups: .n8n folder using cron
 
-    Add a Uptime Monitor (e.g. UptimeRobot, BetterStack)
+    📈 Monitoring: Use UptimeRobot or BetterStack
 
 💬 Credits
 
-Crafted with ❤️ by [Pelumi @ https://x.com/mezzo_man]
-
-    Hosted on a GCP Free Tier Ubuntu Server
-    Based on the real setup journey with real errors & solutions
+Crafted with ❤️ by [YourName or @yourhandle]
+Based on a real setup experience using GCP Free Tier Ubuntu 22.04
